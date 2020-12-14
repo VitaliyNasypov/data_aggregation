@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import parser.JsonParserConnect;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.concurrent.*;
 
 public class ServiceThreadPool {
@@ -15,16 +16,15 @@ public class ServiceThreadPool {
             new ConcurrentLinkedQueue<>();
 
     public String getJson(String[] response) {
-        for (String dataUrl : response) {
-            FUTURES.offer(EXECUTOR_SERVICE.submit(new WorkerPool(dataUrl)));
-        }
+        Arrays.stream(response).map(dataUrl -> EXECUTOR_SERVICE
+                .submit(new WorkerPool(dataUrl))).forEach(FUTURES::offer);
         ArrayList<VideoCamera> arrayList = new ArrayList<>();
-        while (!FUTURES.isEmpty()) {
-            try {
+        try {
+            while (!FUTURES.isEmpty()) {
                 arrayList.add(FUTURES.poll().get());
-            } catch (InterruptedException | ExecutionException e) {
-                LOGGER.error(e.getMessage(), e);
             }
+        } catch (InterruptedException | ExecutionException e) {
+            LOGGER.error(e.getMessage(), e);
         }
         EXECUTOR_SERVICE.shutdown();
         return new JsonParserConnect().getJson(arrayList.toArray(VideoCamera[]::new));

@@ -13,10 +13,10 @@ public class Main {
     private static final Logger LOGGER = LoggerFactory.getLogger(Main.class.getName());
 
     public static void main(String[] args) {
-        String[] request = Main.connect("id", "sourceDataUrl", "tokenDataUrl");
-        CompletableFuture<String> processing = CompletableFuture.supplyAsync(() ->
-                new ServiceThreadPool().getJson(request));
         try {
+            CompletableFuture<String> processing = CompletableFuture.supplyAsync(() ->
+                    Main.connect("id", "sourceDataUrl", "tokenDataUrl"))
+                    .thenApply((result) -> new ServiceThreadPool().getJson(result));
             String response = processing.get();
             LOGGER.info(response);
         } catch (InterruptedException | ExecutionException e) {

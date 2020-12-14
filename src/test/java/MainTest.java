@@ -16,7 +16,7 @@ public class MainTest {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader("logging.log"))) {
             String expected = "[main] INFO  Main - [{\"id\":\"1\",\"urlType\":\"LIVE\","
                     + "\"videoUrl\":\"rtsp://127.0.0.1/1\",\"value\":"
-                    +                    "\"fa4b588e-249b-11e9-ab14-d663bd873d93\","
+                    + "\"fa4b588e-249b-11e9-ab14-d663bd873d93\","
                     + "\"ttl\":\"120\"},{\"id\":\"20\",\"urlType\":\"ARCHIVE\","
                     + "\"videoUrl\":\"rtsp://127.0.0.1/2\","
                     + "\"value\":\"fa4b5b22-249b-11e9-ab14-d663bd873d93\",\"ttl\":"
