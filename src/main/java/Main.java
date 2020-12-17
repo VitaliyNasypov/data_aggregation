@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         try {
             CompletableFuture<String> processing = CompletableFuture.supplyAsync(() ->
-                    Main.connect("id", "sourceDataUrl", "tokenDataUrl"))
+                    new Main().connect("id", "sourceDataUrl", "tokenDataUrl"))
                     .thenApply((result) -> new ServiceThreadPool().getJson(result));
             String response = processing.get();
             LOGGER.info(response);
@@ -24,7 +24,7 @@ public class Main {
         }
     }
 
-    private static String[] connect(String... params) {
+    private String[] connect(String... params) {
         try {
             URL url = new URL("http://www.mocky.io/v2/5c51b9dd3400003252129fb5");
             InputStream input = url.openStream();

@@ -11,22 +11,22 @@ import java.util.concurrent.*;
 
 public class ServiceThreadPool {
     private static final Logger LOGGER = LoggerFactory.getLogger(ServiceThreadPool.class.getName());
-    private static final ExecutorService EXECUTOR_SERVICE = Executors.newCachedThreadPool();
-    private static final ConcurrentLinkedQueue<Future<VideoCamera>> FUTURES =
+    private final ExecutorService executorService = Executors.newCachedThreadPool();
+    private final ConcurrentLinkedQueue<Future<VideoCamera>> futures =
             new ConcurrentLinkedQueue<>();
 
     public String getJson(String[] response) {
-        Arrays.stream(response).map(dataUrl -> EXECUTOR_SERVICE
-                .submit(new WorkerPool(dataUrl))).forEach(FUTURES::offer);
+        Arrays.stream(response).map(dataUrl -> executorService
+                .submit(new WorkerPool(dataUrl))).forEach(futures::offer);
         ArrayList<VideoCamera> arrayList = new ArrayList<>();
         try {
-            while (!FUTURES.isEmpty()) {
-                arrayList.add(FUTURES.poll().get());
+            while (!futures.isEmpty()) {
+                arrayList.add(futures.poll().get());
             }
         } catch (InterruptedException | ExecutionException e) {
             LOGGER.error(e.getMessage(), e);
         }
-        EXECUTOR_SERVICE.shutdown();
+        executorService.shutdown();
         return new JsonParserConnect().getJson(arrayList.toArray(VideoCamera[]::new));
     }
 }
